@@ -8,6 +8,7 @@ from .claude import ClaudeAdapter
 from .codex import CodexAdapter
 from .ide import CodeBuddyAdapter, QoderAdapter, TraeAdapter
 from .opencode import OpenCodeAdapter
+from .pi import OmpAdapter, PiAdapter
 
 ADAPTERS: dict[Agent, type[Adapter]] = {
     Agent.CLAUDE: ClaudeAdapter,
@@ -16,6 +17,8 @@ ADAPTERS: dict[Agent, type[Adapter]] = {
     Agent.TRAE: TraeAdapter,
     Agent.QODER: QoderAdapter,
     Agent.CODEBUDDY: CodeBuddyAdapter,
+    Agent.PI: PiAdapter,
+    Agent.OMP: OmpAdapter,
 }
 
 

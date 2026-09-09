@@ -71,6 +71,8 @@ const AGENT_LABELS: Record<string, string> = {
   trae: "Trae",
   qoder: "Qoder",
   codebuddy: "CodeBuddy",
+  pi: "Pi",
+  omp: "Oh My Pi",
 };
 
 function App() {

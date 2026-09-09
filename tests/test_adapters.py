@@ -5,6 +5,7 @@ from agent_usage_monitor.adapters.claude import ClaudeAdapter
 from agent_usage_monitor.adapters.codex import CodexAdapter
 from agent_usage_monitor.adapters.ide import TraeAdapter
 from agent_usage_monitor.adapters.opencode import OpenCodeAdapter
+from agent_usage_monitor.adapters.pi import OmpAdapter, PiAdapter
 from agent_usage_monitor.models import Accuracy
 
 
@@ -283,3 +284,134 @@ def test_ide_exact_only_disables_estimates(tmp_path):
     adapter = TraeAdapter([tmp_path], include_estimates=False)
 
     assert adapter.collect() == []
+
+
+def test_pi_session_jsonl_parses_usage_and_model_fallback(tmp_path):
+    records = [
+        {
+            "type": "session",
+            "version": 3,
+            "id": "s-pi",
+            "timestamp": "2026-08-28T03:22:08.928Z",
+            "cwd": "/work/project",
+        },
+        {
+            "type": "model_change",
+            "id": "mc1",
+            "parentId": None,
+            "timestamp": "2026-08-28T03:22:09.034Z",
+            "provider": "minimax",
+            "modelId": "MiniMax-M2.7",
+        },
+        {
+            "type": "message",
+            "id": "m1",
+            "parentId": "mc1",
+            "timestamp": "2026-08-28T03:36:15.714Z",
+            "message": {
+                "role": "assistant",
+                "provider": "minimax",
+                "model": "MiniMax-M2.7",
+                "usage": {
+                    "input": 100,
+                    "output": 20,
+                    "cacheRead": 50,
+                    "cacheWrite": 10,
+                    "reasoning": 5,
+                    "totalTokens": 180,
+                    "cost": {
+                        "input": 0.1,
+                        "output": 0.2,
+                        "cacheRead": 0,
+                        "cacheWrite": 0,
+                        "total": 0.3,
+                    },
+                },
+            },
+        },
+        {
+            "type": "message",
+            "id": "m2",
+            "timestamp": "2026-08-28T03:37:15.714Z",
+            "message": {"role": "user", "usage": None},
+        },
+        {
+            "type": "message",
+            "id": "m3",
+            "parentId": "m1",
+            "timestamp": "2026-08-28T03:38:15.714Z",
+            "message": {"role": "assistant", "usage": None},
+        },
+    ]
+    write_jsonl(tmp_path / "session-a.jsonl", records + [records[2]])
+    adapter = PiAdapter([tmp_path])
+
+    events = adapter.collect()
+
+    assert len(events) == 1
+    assert events[0].usage.total == 180
+    assert events[0].usage.reasoning == 5
+    assert events[0].model == "minimax/MiniMax-M2.7"
+    assert events[0].session_id == "s-pi"
+    assert events[0].project == "/work/project"
+    assert events[0].cost_usd == 0.3
+    assert events[0].accuracy == Accuracy.EXACT
+
+
+def test_omp_session_jsonl_parses_reasoning_tokens_and_model_change(tmp_path):
+    records = [
+        {
+            "type": "session",
+            "version": 3,
+            "id": "s-omp",
+            "timestamp": "2026-09-09T12:07:28.229Z",
+            "cwd": "/work/omp-project",
+        },
+        {
+            "type": "model_change",
+            "id": "mc1",
+            "parentId": None,
+            "timestamp": "2026-09-09T12:07:28.403Z",
+            "model": "volcengine-coding-plan/glm-5.3-flash",
+        },
+        {
+            "type": "message",
+            "id": "m1",
+            "parentId": "mc1",
+            "timestamp": "2026-09-09T12:08:00.000Z",
+            "message": {
+                "role": "assistant",
+                "provider": "volcengine-coding-plan",
+                "model": "glm-5.3",
+                "usage": {
+                    "input": 59012,
+                    "output": 365,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 59377,
+                    "reasoningTokens": 267,
+                    "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0, "total": 0},
+                },
+            },
+        },
+        {
+            "type": "message",
+            "id": "m2",
+            "parentId": "m1",
+            "timestamp": "2026-09-09T12:09:00.000Z",
+            "message": {"role": "assistant", "usage": {"input": 10, "output": 5}},
+        },
+    ]
+    write_jsonl(tmp_path / "2026-09-09T12-07-28-229Z_s-omp.jsonl", records)
+    adapter = OmpAdapter([tmp_path])
+
+    events = adapter.collect()
+
+    assert [event.model for event in events] == [
+        "volcengine-coding-plan/glm-5.3",
+        "volcengine-coding-plan/glm-5.3-flash",
+    ]
+    assert events[0].usage.reasoning == 267
+    assert events[0].usage.total == 59377
+    assert events[1].usage.total == 15
+    assert events[0].project == "/work/omp-project"

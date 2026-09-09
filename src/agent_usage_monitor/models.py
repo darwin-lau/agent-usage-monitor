@@ -13,6 +13,8 @@ class Agent(str, Enum):
     TRAE = "trae"
     QODER = "qoder"
     CODEBUDDY = "codebuddy"
+    PI = "pi"
+    OMP = "omp"
 
 
 class Accuracy(str, Enum):
