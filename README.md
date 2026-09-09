@@ -7,9 +7,9 @@
 
 [中文](#中文) · [English](#english) · [最新版本 / Latest release](https://github.com/Darwin-lfl/agent-usage-monitor/releases/latest)
 
-支持 Claude Code、Codex、OpenCode、Trae、Qoder 和 CodeBuddy。统一统计 Token、模型、时间趋势和数据源状态，同时提供交互式 TUI、浏览器仪表盘以及 JSON/CSV 输出。
+支持 Claude Code、Codex、OpenCode、Pi、OMP、Trae、Qoder 和 CodeBuddy。统一统计 Token、模型、时间趋势和数据源状态，同时提供交互式 TUI、浏览器仪表盘以及 JSON/CSV 输出。
 
-Monitor Claude Code, Codex, OpenCode, Trae, Qoder, and CodeBuddy from one local application, with an interactive TUI, a browser dashboard, and machine-readable output.
+Monitor Claude Code, Codex, OpenCode, Pi, OMP, Trae, Qoder, and CodeBuddy from one local application, with an interactive TUI, a browser dashboard, and machine-readable output.
 
 ## 功能演示 / Demo
 
@@ -39,7 +39,7 @@ Agent Usage Monitor 读取各编程 Agent 保存在本机的日志或数据库�
 
 | 功能 | 说明 |
 |---|---|
-| 多 Agent 统计 | 同时检测 Claude Code、Codex、OpenCode、Trae、Qoder、CodeBuddy |
+| 多 Agent 统计 | 同时检测 Claude Code、Codex、OpenCode、Pi、OMP、Trae、Qoder、CodeBuddy |
 | 模型维度 | 按 Agent 和模型统计 Input、Output、Cache、Reasoning、Total、事件数和日志中已有的 Cost |
 | 时间分析 | 支持今天、24 小时、7/30/90 天、全部时间和自定义范围 |
 | 时间粒度 | 支持小时、天、周、月聚合 |
@@ -193,6 +193,8 @@ Warehouse 只保存计数和分析维度，不保存提示词或回复正文。
 | Claude Code | `~/.claude/projects/**/*.jsonl` | Provider usage 字段，精确 |
 | Codex | `~/.codex/{sessions,archived_sessions}/**/*.jsonl` | 累计 Token 快照和 Turn 模型上下文，精确 |
 | OpenCode | `~/.local/share/opencode/opencode*.db` 或旧版 JSON 存储 | Message Token 字段，精确 |
+| Pi | `~/.pi/agent/sessions/**/*.jsonl` | Assistant message usage 字段，精确 |
+| OMP | `~/.omp/agent/sessions/**/*.jsonl` | Assistant message usage 字段，精确 |
 | Trae | VS Code 兼容的 `User` JSON/SQLite 存储 | 精确字段或明确标记的估算 |
 | Qoder | VS Code 兼容的 `User` JSON/SQLite 存储 | 精确字段或明确标记的估算 |
 | CodeBuddy | VS Code 兼容的 `User` JSON/SQLite 存储 | 精确字段或明确标记的估算 |
@@ -247,7 +249,7 @@ Collection and aggregation stay on the user's machine. Web mode listens only on 
 
 | Feature | Description |
 |---|---|
-| Multi-agent analytics | Detect Claude Code, Codex, OpenCode, Trae, Qoder, and CodeBuddy together |
+| Multi-agent analytics | Detect Claude Code, Codex, OpenCode, Pi, OMP, Trae, Qoder, and CodeBuddy together |
 | Model breakdown | Input, Output, Cache, Reasoning, Total, events, and log-reported cost by agent and model |
 | Time ranges | Today, rolling 24 hours, 7/30/90 days, all time, and custom ranges |
 | Granularity | Hour, day, week, and month buckets |
@@ -401,6 +403,8 @@ The warehouse stores counters and analytical dimensions, never prompt or respons
 | Claude Code | `~/.claude/projects/**/*.jsonl` | Exact provider usage fields |
 | Codex | `~/.codex/{sessions,archived_sessions}/**/*.jsonl` | Exact cumulative snapshots with turn-level model context |
 | OpenCode | `~/.local/share/opencode/opencode*.db` or legacy JSON storage | Exact message token fields |
+| Pi | `~/.pi/agent/sessions/**/*.jsonl` | Exact assistant message usage fields |
+| OMP | `~/.omp/agent/sessions/**/*.jsonl` | Exact assistant message usage fields |
 | Trae | VS Code-compatible `User` JSON/SQLite storage | Exact fields or labeled estimates |
 | Qoder | VS Code-compatible `User` JSON/SQLite storage | Exact fields or labeled estimates |
 | CodeBuddy | VS Code-compatible `User` JSON/SQLite storage | Exact fields or labeled estimates |

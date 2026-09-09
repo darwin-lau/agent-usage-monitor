@@ -20,6 +20,8 @@ AGENT_LABELS = {
     "trae": "Trae",
     "qoder": "Qoder",
     "codebuddy": "CodeBuddy",
+    "pi": "Pi",
+    "omp": "Oh My Pi",
 }
 BLOCKS = "▁▂▃▄▅▆▇█"
 
