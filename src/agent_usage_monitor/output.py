@@ -11,6 +11,7 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
+from . import __version__
 from .models import UsageEvent
 
 AGENT_LABELS = {
@@ -63,7 +64,7 @@ def _header(snapshot: dict, view: str) -> Panel:
     grid.add_column(justify="right")
     title = Text("AGENT USAGE", style="bold white")
     title.append("  ANALYTICS", style="bold bright_cyan")
-    title.append("  v0.1", style="dim")
+    title.append(f"  v{__version__}", style="dim")
     range_text = selection["range"]
     if range_text == "custom":
         range_text = f"{_local_time(selection['start'])} → {_local_time(selection['end'])}"
